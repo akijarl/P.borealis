@@ -1,4 +1,4 @@
-setwd("C:/Users/aki/Desktop/P.borealis")
+setwd("C:/Users/aki/Desktop/P.borealis/P.borealis/")
 require(ggplot2)
 require(vcfR)
 require(cowplot)
@@ -419,8 +419,8 @@ tbl2$pop<-pop2
 tbl2$ind<-samp2
 row.names(tbl2)<-samp2
 tbl2<-tbl2[order(tbl2[,3],tbl2[,1],tbl2[,2]),]
-tbl2<-tbl2[c(which(tbl2$pop=="SI18"),which(tbl2$pop=="SU18"),which(tbl2$pop=="SD18"),which(tbl2$pop=="IS21"),which(tbl2$pop=="YS21"),which(tbl2$pop=="UH21"),which(tbl2$pop=="AR18")),]
-barplot(t(as.matrix(tbl2)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.names = 0.75)
+tbl2<-tbl2[c(which(tbl2$pop=="AR18"),which(tbl2$pop=="SI18"),which(tbl2$pop=="SU18"),which(tbl2$pop=="SD18"),which(tbl2$pop=="IS21"),which(tbl2$pop=="YS21"),which(tbl2$pop=="UH21")),]
+barplot(t(as.matrix(tbl2)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = .75,cex.axis = 1.5)
 
 
 indmiss<-read.table("postfiltmiss.imiss",sep="\t",header = T)
@@ -461,7 +461,7 @@ row.names(tbl2_18)<-samp2[1:36]
 tbl2_18<-tbl2_18[order(tbl2_18[,3],tbl2_18[,1],tbl2_18[,2]),]
 tbl2_18<-tbl2_18[c(which(tbl2_18$pop=="SI18"),which(tbl2_18$pop=="SU18"),which(tbl2_18$pop=="SD18"),which(tbl2_18$pop=="AR18")),]
 par(mar=c(8,4.4,1,0.5))
-barplot(t(as.matrix(tbl2_18)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = 1.5,cex.axis = 1.5,)
+barplot(t(as.matrix(tbl2_18)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = 1.5,cex.axis = 1.5)
 
 tbl2_21=read.table("P.borealis_2021.2.Q")
 tbl2_21$pop<-pop2[37:68]
@@ -470,4 +470,4 @@ row.names(tbl2_21)<-samp2[37:68]
 tbl2_21<-tbl2_21[order(tbl2_21[,3],tbl2_21[,1],tbl2_21[,2]),]
 tbl2_21<-tbl2_21[c(which(tbl2_21$pop=="IS21"),which(tbl2_21$pop=="YS21"),which(tbl2_21$pop=="UH21")),]
 par(mar=c(8,4.4,1,0.5))
-barplot(t(as.matrix(tbl2_21)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = 1.5,cex.axis = 1.5,)
+barplot(t(as.matrix(tbl2_21)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = 1.5,cex.axis = 1.5)
