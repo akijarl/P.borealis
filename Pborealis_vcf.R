@@ -135,6 +135,7 @@ table(as.vector(geno[,48:57])) #IS21
 table(as.vector(geno[,58:68])) #UH21
 
 pop2<-c(rep("SU18",9),rep("AR18",10),rep("SI18",10),rep("SD18",7),rep("YS21",11),rep("IS21",10),rep("UH21",11))
+samp2<-c("11_SU18","18_SU18","19_SU18","20_SU18","21_SU18","22_SU18","24_SU18","3_SU18","9_SU18","29_AR18","30_AR18","31_AR18","36_AR18","39_AR18","42_AR18","43_AR18","44_AR18","45_AR18","48_AR18","49_SI18","51_SI18","52_SI18","57_SI18","59_SI18","66_SI18","67_SI18","68_SI18","70_SI18","72_SI18","74_SD18","75_SD18","80_SD18","81_SD18","88_SD18","89_SD18","92_SD18","1_YS21","10_YS21","11_YS21","12_YS21","2_YS21","3_YS21","4_YS21","5_YS21","6_YS21","8_YS21","9_YS21","67_IS21","68_IS21","69_IS21","70_IS21","71_IS21","72_IS21","73_IS21","74_IS21","75_IS21","76_IS21","141_UH21","142_UH21","143_UH21","144_UH21","145_UH21","146_UH21","147_UH21","148_UH21","149_UH21","150_UH21","151_UH21")
 
 #separate out the temporal samples
 geno_18<-geno[,c(1:36)]
@@ -346,7 +347,7 @@ Per_exp<-head(round(pc.percent, 2))
 year<-c(rep("2018",36),rep("2021",32))
 tab$pop<-pop2
 tab$year<-year
-#tab$ind<-ind #ind object from line 88
+tab$ind<-samp2 #samp2 object from line 138
 cl<-c("blue","orange","cyan", "lightgreen", "darkgreen","red", "black")
 #cl<-c("blue","cyan", "orange", "darkgreen","red")
 #okabe <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#E15759")
@@ -415,6 +416,58 @@ barplot(t(as.matrix(tbl1)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border
 
 tbl2=read.table("P.borealis_stacks.g5mac3dp10ind50g95maf05mdp20p1.recode.2.Q")
 tbl2$pop<-pop2
+tbl2$ind<-samp2
+row.names(tbl2)<-samp2
 tbl2<-tbl2[order(tbl2[,3],tbl2[,1],tbl2[,2]),]
 tbl2<-tbl2[c(which(tbl2$pop=="SI18"),which(tbl2$pop=="SU18"),which(tbl2$pop=="SD18"),which(tbl2$pop=="IS21"),which(tbl2$pop=="YS21"),which(tbl2$pop=="UH21"),which(tbl2$pop=="AR18")),]
-barplot(t(as.matrix(tbl2)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,cex.names = 0.75,las=2)
+barplot(t(as.matrix(tbl2)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.names = 0.75)
+
+
+indmiss<-read.table("postfiltmiss.imiss",sep="\t",header = T)
+
+indmiss$Sample<-samp2
+indmiss<-indmiss[order(indmiss$F_MISS,decreasing = T),]
+indmiss$Sample<-factor(indmiss$Sample,levels = indmiss$Sample)
+ggplot(data=indmiss)+
+  geom_col(aes(x = Sample, y = (F_MISS)))+
+  ylab("Fraction of missing SNPs")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = -45, vjust = 0.1,hjust = 0.1))
+
+aggregate(F_MISS~Pop,indmiss,FUN=mean)
+
+cv18<-read.csv("admixture_CV_2018.csv")
+
+ggplot(cv18[-1,])+
+  geom_line(aes(K,CV),size=1)+
+  #geom_vline(xintercept = 4,linetype="dashed")+
+  scale_x_continuous(breaks = c(1:15))+
+  theme_classic()+
+  theme(axis.text=element_text(size=14),axis.title=element_text(size=14))
+
+cv21<-read.csv("admixture_CV_2021.csv")
+
+ggplot(cv21[-1,])+
+  geom_line(aes(K,CV),size=1)+
+  #geom_vline(xintercept = 4,linetype="dashed")+
+  scale_x_continuous(breaks = c(1:15))+
+  theme_classic()+
+  theme(axis.text=element_text(size=14),axis.title=element_text(size=14))
+
+tbl2_18=read.table("P.borealis_2018.2.Q")
+tbl2_18$pop<-pop2[1:36]
+tbl2_18$ind<-samp2[1:36]
+row.names(tbl2_18)<-samp2[1:36]
+tbl2_18<-tbl2_18[order(tbl2_18[,3],tbl2_18[,1],tbl2_18[,2]),]
+tbl2_18<-tbl2_18[c(which(tbl2_18$pop=="SI18"),which(tbl2_18$pop=="SU18"),which(tbl2_18$pop=="SD18"),which(tbl2_18$pop=="AR18")),]
+par(mar=c(8,4.4,1,0.5))
+barplot(t(as.matrix(tbl2_18)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = 1.5,cex.axis = 1.5,)
+
+tbl2_21=read.table("P.borealis_2021.2.Q")
+tbl2_21$pop<-pop2[37:68]
+tbl2_21$ind<-samp2[37:68]
+row.names(tbl2_21)<-samp2[37:68]
+tbl2_21<-tbl2_21[order(tbl2_21[,3],tbl2_21[,1],tbl2_21[,2]),]
+tbl2_21<-tbl2_21[c(which(tbl2_21$pop=="IS21"),which(tbl2_21$pop=="YS21"),which(tbl2_21$pop=="UH21")),]
+par(mar=c(8,4.4,1,0.5))
+barplot(t(as.matrix(tbl2_21)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = 1.5,cex.axis = 1.5,)
