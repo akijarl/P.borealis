@@ -419,9 +419,19 @@ tbl2$pop<-pop2
 tbl2$ind<-samp2
 row.names(tbl2)<-samp2
 tbl2<-tbl2[order(tbl2[,3],tbl2[,1],tbl2[,2]),]
-tbl2<-tbl2[c(which(tbl2$pop=="AR18"),which(tbl2$pop=="SI18"),which(tbl2$pop=="SU18"),which(tbl2$pop=="SD18"),which(tbl2$pop=="IS21"),which(tbl2$pop=="YS21"),which(tbl2$pop=="UH21")),]
+tbl2<-tbl2[c(which(tbl2$pop=="AR18"),which(tbl2$pop=="SI18"),which(tbl2$pop=="SU18"),which(tbl2$pop=="IS21"),which(tbl2$pop=="SD18"),which(tbl2$pop=="YS21"),which(tbl2$pop=="UH21")),]
 barplot(t(as.matrix(tbl2)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = .75,cex.axis = 1.5)
 
+Qmean<-data.frame(aggregate(V1~pop,tbl2,FUN=mean),V2=aggregate(V2~pop,tbl2,FUN=mean)$V2)
+data.frame(V1=Qmean$V1,V2=Qmean$V2,pop=Qmean$pop)
+row.names(Qmean)<-Qmean$pop
+Qmean<-Qmean[c(which(Qmean$pop=="AR18"),which(Qmean$pop=="SI18"),which(Qmean$pop=="SU18"),which(Qmean$pop=="IS21"),which(Qmean$pop=="SD18"),which(Qmean$pop=="YS21"),which(Qmean$pop=="UH21")),]
+Qmean$pop<-factor(Qmean$pop,level=Qmean$pop)
+ggplot(data = Qmean)+
+  geom_col(aes(x=pop,y=V2),fill="orange")+
+  xlab("")+
+  ylab("Mean outshore ancestry assignment")+
+  theme_classic()
 
 indmiss<-read.table("postfiltmiss.imiss",sep="\t",header = T)
 
