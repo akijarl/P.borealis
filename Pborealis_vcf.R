@@ -104,7 +104,7 @@ ggplot(data=indmiss)+
 aggregate(F_MISS~Pop,indmiss,FUN=mean)
 
 #New filtered file
-x<-read.vcfR("P.borealis_stacks.g5mac3dp10ind50g95maf05mdp20p1.recode.vcf")
+x<-read.vcfR("../P.borealis_stacks.g5mac3dp10ind50g95maf05mdp20p1.recode.vcf")
 queryMETA(x)
 dp <- extract.gt(x, element = "DP", as.numeric=TRUE)
 GQ <- extract.gt(x, element = "GQ", as.numeric=TRUE)
@@ -420,18 +420,23 @@ tbl2$ind<-samp2
 row.names(tbl2)<-samp2
 tbl2<-tbl2[order(tbl2[,3],tbl2[,1],tbl2[,2]),]
 tbl2<-tbl2[c(which(tbl2$pop=="AR18"),which(tbl2$pop=="SI18"),which(tbl2$pop=="SU18"),which(tbl2$pop=="IS21"),which(tbl2$pop=="SD18"),which(tbl2$pop=="YS21"),which(tbl2$pop=="UH21")),]
-barplot(t(as.matrix(tbl2)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = .75,cex.axis = 1.5)
+barplot(t(as.matrix(tbl2)), col=c("red","blue"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = .75,cex.axis = 1.5)
 
 Qmean<-data.frame(aggregate(V1~pop,tbl2,FUN=mean),V2=aggregate(V2~pop,tbl2,FUN=mean)$V2)
-data.frame(V1=Qmean$V1,V2=Qmean$V2,pop=Qmean$pop)
+Qmean<-data.frame(V1=Qmean$V1,V2=Qmean$V2,pop=c("AR","S3","S4","S1","S2","OS","S5"))
 row.names(Qmean)<-Qmean$pop
-Qmean<-Qmean[c(which(Qmean$pop=="AR18"),which(Qmean$pop=="SI18"),which(Qmean$pop=="SU18"),which(Qmean$pop=="IS21"),which(Qmean$pop=="SD18"),which(Qmean$pop=="YS21"),which(Qmean$pop=="UH21")),]
+Qmean<-Qmean[c(which(Qmean$pop=="AR"),which(Qmean$pop=="S1"),which(Qmean$pop=="S2"),which(Qmean$pop=="S3"),which(Qmean$pop=="S4"),which(Qmean$pop=="S5"),which(Qmean$pop=="OS")),]
 Qmean$pop<-factor(Qmean$pop,level=Qmean$pop)
+
 ggplot(data = Qmean)+
   geom_col(aes(x=pop,y=V2),fill="orange")+
+  #geom_line(inherit.aes = F,aes(x=Qmean$pop,y=c(NA,Qmean$V2[2],Qmean$V2[3],Qmean$V2[4],Qmean$V2[5],Qmean$V2[6],Qmean$V2[7])),group=1) +
+  geom_line(inherit.aes = F,aes(x=Qmean$pop,y=c(NA,NA,NA,Qmean$V2[4],sum(Qmean$V2[4],(Qmean$V2[6]-Qmean$V2[4])/2),Qmean$V2[6],Qmean$V2[7])),group=1,size=1.5) +
   xlab("")+
   ylab("Mean outshore ancestry assignment")+
-  theme_classic()
+  theme_classic()+
+  theme(axis.text=element_text(size=14),axis.title=element_text(size=14))
+
 
 indmiss<-read.table("postfiltmiss.imiss",sep="\t",header = T)
 
@@ -481,3 +486,13 @@ tbl2_21<-tbl2_21[order(tbl2_21[,3],tbl2_21[,1],tbl2_21[,2]),]
 tbl2_21<-tbl2_21[c(which(tbl2_21$pop=="IS21"),which(tbl2_21$pop=="YS21"),which(tbl2_21$pop=="UH21")),]
 par(mar=c(8,4.4,1,0.5))
 barplot(t(as.matrix(tbl2_21)), col=c("blue","red"),xlab=NA, ylab="Ancestry", border=NA,las=2,cex.lab=1.5,cex.names = 1.5,cex.axis = 1.5)
+
+
+#Fjarlægð
+library(geo)
+pos1 <- list(lat = c(65, 66), lon = c(-19, -20))
+pos2 <- list(lat = c(64, 65), lon = c(-19, -20))
+
+dists <- arcdist(pos1, pos2)         # pos1 and pos2 are lists of coordinates
+
+std<-read.csv("stodvar.csv")
