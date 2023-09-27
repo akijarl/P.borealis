@@ -441,6 +441,7 @@ ggplot(data = Qmean)+
 indmiss<-read.table("postfiltmiss.imiss",sep="\t",header = T)
 
 indmiss$Sample<-samp2
+indmiss$Pop<-pop2
 indmiss<-indmiss[order(indmiss$F_MISS,decreasing = T),]
 indmiss$Sample<-factor(indmiss$Sample,levels = indmiss$Sample)
 ggplot(data=indmiss)+
