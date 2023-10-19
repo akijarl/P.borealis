@@ -24,84 +24,87 @@ require(robust)
 #install.packages("bigstatsr")
 require(bigstatsr)
 
-x<-read.vcfR("P.borealis_stacks.vcf")
-
-queryMETA(x)
-queryMETA(x, element = 'DP')
-
-ad <- extract.gt(x, element = "AD", as.numeric=TRUE)
-
-dp <- extract.gt(x, element = "DP", as.numeric=TRUE)
-dp2<-data.frame(colnames(dp),colMeans(dp,na.rm = T))
-colnames(dp2)<-c("Sample","MeanDP")
-dp2$Max <- apply(dp, 2, function(x) max(x, na.rm = TRUE))
-dp2$Min <- apply(dp, 2, function(x) min(x, na.rm = TRUE))
-dp2$Median <- apply(dp, 2, function(x) median(x, na.rm = TRUE))
-
-ggplot(dp2)+
-  geom_col(aes(x=Sample,y=MeanDP))+
-  geom_point(aes(x=Sample,y=Median))+
-  #geom_pointrange(aes(x=Sample,y=MeanDP, ymin=Min,ymax=Max))+
-  ylab("DP")+
-  theme_classic()+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1,size=6.5))
-
-dp3<-data.frame(row.names(dp),rowMeans(dp,na.rm = T))
-colnames(dp3)<-c("SNP","MeanDP")
-dp3$MedianDP <- apply(dp, 1, function(x) median(x, na.rm = TRUE))
-dp3$Max <- apply(dp, 1, function(x) max(x, na.rm = TRUE))
-dp3$Min <- apply(dp, 1, function(x) min(x, na.rm = TRUE))
-
-ggplot(dp3)+
-  geom_col(aes(x=SNP,y=MeanDP))+
-  geom_point(aes(x=SNP,y=MedianDP))+
-  #geom_pointrange(aes(x=Sample,y=MeanDP, ymin=Min,ymax=Max))+
-  ylab("DP")+
-  ylim(0,50)+
-  theme_classic()+
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
-
-mean((dp3$MeanDP))
-sd((dp3$MeanDP))
-
-ggplot(dp3[dp3$MeanDP>14 & dp3$MeanDP<22,])+
-  geom_col(aes(x=SNP,y=MeanDP))+
-  geom_point(aes(x=SNP,y=MedianDP))+
-  #geom_pointrange(aes(x=Sample,y=MeanDP, ymin=Min,ymax=Max))+
-  ylab("DP")+
-  ylim(0,50)+
-  theme_classic()+
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
-
-hist((dp3[dp3$MeanDP>14 & dp3$MeanDP<22,]$MeanDP))
-
-GQ <- extract.gt(x, element = "GQ", as.numeric=TRUE)
-
-
-indmiss<-read.table("out.imiss",sep="\t",header = T)
-indmiss$INDV
-
-ind<-c("SU18_10", "SU18_11", "SU18_13", "SU18_17", "SU18_18", "SU18_19", "SU18_20", "SU18_21", "SU18_22", "SU18_23", "SU18_24", "SU18_3", "SU18_6", "SU18_7", "SU18_9", "AR18_26", "AR18_29", "AR18_30", "AR18_31", "AR18_32", "AR18_33", "AR18_34", "AR18_36", "AR18_39", "AR18_41", "AR18_42", "AR18_43", "AR18_44", "AR18_45", "AR18_47", "AR18_48", "SI18_49", "SI18_51", "SI18_52", "SI18_53", "SI18_56", "SI18_57", "SI18_58", "SI18_59", "SI18_60", "SI18_66", "SI18_67", "SI18_68", "SI18_70", "SI18_71", "SI18_72", "SD18_74", "SD18_75", "SD18_76", "SD18_78", "SD18_79", "SD18_80", "SD18_81", "SD18_84", "SD18_86", "SD18_87", "SD18_88", "SD18_89", "SD18_90", "SD18_91", "SD18_92", "SD18_94", "YS21_1", "YS21_10", "YS21_11", "YS21_12", "YS21_2", "YS21_3", "YS21_4", "YS21_5", "YS21_6", "YS21_7", "YS21_8", "YS21_9", "IS21_66", "IS21_67", "IS21_68", "IS21_69", "IS21_70", "IS21_71", "IS21_72", "IS21_73", "IS21_74", "IS21_75", "IS21_76", "UH21_141", "UH21_142", "UH21_143", "UH21_144", "UH21_145", "UH21_146", "UH21_147", "UH21_148", "UH21_149", "UH21_150", "UH21_151")
-samp<-c("10_SU18","11_SU18","13_SU18","17_SU18","18_SU18","19_SU18","20_SU18","21_SU18","22_SU18","23_SU18","24_SU18","3_SU18","6_SU18","7_SU18","9_SU18","26_AR18","29_AR18","30_AR18","31_AR18","32_AR18","33_AR18","34_AR18","36_AR18","39_AR18","41_AR18","42_AR18","43_AR18","44_AR18","45_AR18","47_AR18","48_AR18","49_SI18","51_SI18","52_SI18","53_SI18","56_SI18","57_SI18","58_SI18","59_SI18","60_SI18","66_SI18","67_SI18","68_SI18","70_SI18","71_SI18","72_SI18","74_SD18","75_SD18","76_SD18","78_SD18","79_SD18","80_SD18","81_SD18","84_SD18","86_SD18","87_SD18","88_SD18","89_SD18","90_SD18","91_SD18","92_SD18","94_SD18","1_YS21","10_YS21","11_YS21","12_YS21","2_YS21","3_YS21","4_YS21","5_YS21","6_YS21","7_YS21","8_YS21","9_YS21","66_IS21","67_IS21","68_IS21","69_IS21","70_IS21","71_IS21","72_IS21","73_IS21","74_IS21","75_IS21","76_IS21","141_UH21","142_UH21","143_UH21","144_UH21","145_UH21","146_UH21","147_UH21","148_UH21","149_UH21","150_UH21","151_UH21")
-pop<-c("SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21")
-year<-c(rep("2018",62),rep("2021",34))
-indmiss$Sample<-ind
-indmiss$Sample2<-samp
-indmiss$Pop<-pop
-indmiss$Year<-year
-indmiss<-indmiss[order(indmiss$F_MISS,decreasing = T),]
-indmiss$Sample2<-factor(indmiss$Sample2,levels = indmiss$Sample2)
-ggplot(data=indmiss)+
-  geom_col(aes(x = Sample2, y = (F_MISS),fill=Year))+
-  ylab("Fraction of missing SNPs")+
-  theme_classic()+
-  theme(axis.text.x = element_text(angle = -45, vjust = 0.1,hjust = 0.1))
-
-aggregate(F_MISS~Pop,indmiss,FUN=mean)
+###############################################################
+# Pre-filtration (population and SNP level) data visualization 
+###############################################################
+# x<-read.vcfR("P.borealis_stacks.vcf")
+# 
+# queryMETA(x)
+# queryMETA(x, element = 'DP')
+# 
+# ad <- extract.gt(x, element = "AD", as.numeric=TRUE)
+# 
+# dp <- extract.gt(x, element = "DP", as.numeric=TRUE)
+# dp2<-data.frame(colnames(dp),colMeans(dp,na.rm = T))
+# colnames(dp2)<-c("Sample","MeanDP")
+# dp2$Max <- apply(dp, 2, function(x) max(x, na.rm = TRUE))
+# dp2$Min <- apply(dp, 2, function(x) min(x, na.rm = TRUE))
+# dp2$Median <- apply(dp, 2, function(x) median(x, na.rm = TRUE))
+# 
+# ggplot(dp2)+
+#   geom_col(aes(x=Sample,y=MeanDP))+
+#   geom_point(aes(x=Sample,y=Median))+
+#   #geom_pointrange(aes(x=Sample,y=MeanDP, ymin=Min,ymax=Max))+
+#   ylab("DP")+
+#   theme_classic()+
+#   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1,size=6.5))
+# 
+# dp3<-data.frame(row.names(dp),rowMeans(dp,na.rm = T))
+# colnames(dp3)<-c("SNP","MeanDP")
+# dp3$MedianDP <- apply(dp, 1, function(x) median(x, na.rm = TRUE))
+# dp3$Max <- apply(dp, 1, function(x) max(x, na.rm = TRUE))
+# dp3$Min <- apply(dp, 1, function(x) min(x, na.rm = TRUE))
+# 
+# ggplot(dp3)+
+#   geom_col(aes(x=SNP,y=MeanDP))+
+#   geom_point(aes(x=SNP,y=MedianDP))+
+#   #geom_pointrange(aes(x=Sample,y=MeanDP, ymin=Min,ymax=Max))+
+#   ylab("DP")+
+#   ylim(0,50)+
+#   theme_classic()+
+#   theme(axis.title.x=element_blank(),
+#         axis.text.x=element_blank(),
+#         axis.ticks.x=element_blank())
+# 
+# mean((dp3$MeanDP))
+# sd((dp3$MeanDP))
+# 
+# ggplot(dp3[dp3$MeanDP>14 & dp3$MeanDP<22,])+
+#   geom_col(aes(x=SNP,y=MeanDP))+
+#   geom_point(aes(x=SNP,y=MedianDP))+
+#   #geom_pointrange(aes(x=Sample,y=MeanDP, ymin=Min,ymax=Max))+
+#   ylab("DP")+
+#   ylim(0,50)+
+#   theme_classic()+
+#   theme(axis.title.x=element_blank(),
+#         axis.text.x=element_blank(),
+#         axis.ticks.x=element_blank())
+# 
+# hist((dp3[dp3$MeanDP>14 & dp3$MeanDP<22,]$MeanDP))
+# 
+# GQ <- extract.gt(x, element = "GQ", as.numeric=TRUE)
+# 
+# 
+# indmiss<-read.table("out.imiss",sep="\t",header = T)
+# indmiss$INDV
+# 
+# ind<-c("SU18_10", "SU18_11", "SU18_13", "SU18_17", "SU18_18", "SU18_19", "SU18_20", "SU18_21", "SU18_22", "SU18_23", "SU18_24", "SU18_3", "SU18_6", "SU18_7", "SU18_9", "AR18_26", "AR18_29", "AR18_30", "AR18_31", "AR18_32", "AR18_33", "AR18_34", "AR18_36", "AR18_39", "AR18_41", "AR18_42", "AR18_43", "AR18_44", "AR18_45", "AR18_47", "AR18_48", "SI18_49", "SI18_51", "SI18_52", "SI18_53", "SI18_56", "SI18_57", "SI18_58", "SI18_59", "SI18_60", "SI18_66", "SI18_67", "SI18_68", "SI18_70", "SI18_71", "SI18_72", "SD18_74", "SD18_75", "SD18_76", "SD18_78", "SD18_79", "SD18_80", "SD18_81", "SD18_84", "SD18_86", "SD18_87", "SD18_88", "SD18_89", "SD18_90", "SD18_91", "SD18_92", "SD18_94", "YS21_1", "YS21_10", "YS21_11", "YS21_12", "YS21_2", "YS21_3", "YS21_4", "YS21_5", "YS21_6", "YS21_7", "YS21_8", "YS21_9", "IS21_66", "IS21_67", "IS21_68", "IS21_69", "IS21_70", "IS21_71", "IS21_72", "IS21_73", "IS21_74", "IS21_75", "IS21_76", "UH21_141", "UH21_142", "UH21_143", "UH21_144", "UH21_145", "UH21_146", "UH21_147", "UH21_148", "UH21_149", "UH21_150", "UH21_151")
+# samp<-c("10_SU18","11_SU18","13_SU18","17_SU18","18_SU18","19_SU18","20_SU18","21_SU18","22_SU18","23_SU18","24_SU18","3_SU18","6_SU18","7_SU18","9_SU18","26_AR18","29_AR18","30_AR18","31_AR18","32_AR18","33_AR18","34_AR18","36_AR18","39_AR18","41_AR18","42_AR18","43_AR18","44_AR18","45_AR18","47_AR18","48_AR18","49_SI18","51_SI18","52_SI18","53_SI18","56_SI18","57_SI18","58_SI18","59_SI18","60_SI18","66_SI18","67_SI18","68_SI18","70_SI18","71_SI18","72_SI18","74_SD18","75_SD18","76_SD18","78_SD18","79_SD18","80_SD18","81_SD18","84_SD18","86_SD18","87_SD18","88_SD18","89_SD18","90_SD18","91_SD18","92_SD18","94_SD18","1_YS21","10_YS21","11_YS21","12_YS21","2_YS21","3_YS21","4_YS21","5_YS21","6_YS21","7_YS21","8_YS21","9_YS21","66_IS21","67_IS21","68_IS21","69_IS21","70_IS21","71_IS21","72_IS21","73_IS21","74_IS21","75_IS21","76_IS21","141_UH21","142_UH21","143_UH21","144_UH21","145_UH21","146_UH21","147_UH21","148_UH21","149_UH21","150_UH21","151_UH21")
+# pop<-c("SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21")
+# year<-c(rep("2018",62),rep("2021",34))
+# indmiss$Sample<-ind
+# indmiss$Sample2<-samp
+# indmiss$Pop<-pop
+# indmiss$Year<-year
+# indmiss<-indmiss[order(indmiss$F_MISS,decreasing = T),]
+# indmiss$Sample2<-factor(indmiss$Sample2,levels = indmiss$Sample2)
+# ggplot(data=indmiss)+
+#   geom_col(aes(x = Sample2, y = (F_MISS),fill=Year))+
+#   ylab("Fraction of missing SNPs")+
+#   theme_classic()+
+#   theme(axis.text.x = element_text(angle = -45, vjust = 0.1,hjust = 0.1))
+# 
+# aggregate(F_MISS~Pop,indmiss,FUN=mean)
 
 #New filtered file
 x<-read.vcfR("../P.borealis_stacks.g5mac3dp10ind50g95maf05mdp20p1.recode.vcf")
@@ -136,6 +139,17 @@ table(as.vector(geno[,58:68])) #UH21
 
 pop2<-c(rep("SU18",9),rep("AR18",10),rep("SI18",10),rep("SD18",7),rep("YS21",11),rep("IS21",10),rep("UH21",11))
 samp2<-c("11_SU18","18_SU18","19_SU18","20_SU18","21_SU18","22_SU18","24_SU18","3_SU18","9_SU18","29_AR18","30_AR18","31_AR18","36_AR18","39_AR18","42_AR18","43_AR18","44_AR18","45_AR18","48_AR18","49_SI18","51_SI18","52_SI18","57_SI18","59_SI18","66_SI18","67_SI18","68_SI18","70_SI18","72_SI18","74_SD18","75_SD18","80_SD18","81_SD18","88_SD18","89_SD18","92_SD18","1_YS21","10_YS21","11_YS21","12_YS21","2_YS21","3_YS21","4_YS21","5_YS21","6_YS21","8_YS21","9_YS21","67_IS21","68_IS21","69_IS21","70_IS21","71_IS21","72_IS21","73_IS21","74_IS21","75_IS21","76_IS21","141_UH21","142_UH21","143_UH21","144_UH21","145_UH21","146_UH21","147_UH21","148_UH21","149_UH21","150_UH21","151_UH21")
+
+#prepare sample for OutFLANK analysis
+G <- matrix(NA, nrow = nrow(geno), ncol = ncol(geno),dimnames = list(pos_loc,colnames(geno)))
+
+G[geno %in% c("0/0")] <- 0
+G[geno %in% c("0/1", "1/0")] <- 1
+G[geno %in% c("1/1")] <- 2
+
+sum(is.na(geno))/(nrow(geno)*ncol(geno))
+
+G[is.na(G)]<-9
 
 #separate out the temporal samples
 geno_18<-geno[,c(1:36)]
@@ -243,22 +257,56 @@ getFSTs_diploids = function(popNameList, SNPDataColumn){
 pop_18 <- pop2[c(1:36)]
 pop_21 <- pop2[c(37:68)]
 
+my_fst <- MakeDiploidFSTMat(t(G), locusNames = pos_loc, popNames = pop2)
 my_fst_18 <- MakeDiploidFSTMat(t(G18), locusNames = pos_loc, popNames = pop_18)
 my_fst_21 <- MakeDiploidFSTMat(t(G21), locusNames = pos_loc, popNames = pop_21)
 
+plot(my_fst$He, my_fst$FST, xlab="Heterozygosity", ylab=expression(paste("F"[ST], " across all populations", sep="")), main=expression(paste("Per locus F"[ST], " vs Heterozygosity", sep="")))
 plot(my_fst_18$He, my_fst_18$FST, xlab="Heterozygosity", ylab=expression(paste("F"[ST], " across all populations", sep="")), main=expression(paste("Per locus F"[ST], " vs Heterozygosity", sep="")))
 plot(my_fst_21$He, my_fst_21$FST, xlab="Heterozygosity", ylab=expression(paste("F"[ST], " across all populations", sep="")), main=expression(paste("Per locus F"[ST], " vs Heterozygosity", sep="")))
 
 # If a locus has a much lower sample size compared to the rest, it could have a broader error distribution (and therefore incorrectly inferred as an outlier).
+plot(my_fst$FST, my_fst$FSTNoCorr)
+abline(a=0,b=1,col="red")
+
 plot(my_fst_18$FST, my_fst_18$FSTNoCorr)
 abline(a=0,b=1,col="red")
 
 plot(my_fst_21$FST, my_fst_21$FSTNoCorr)
 abline(a=0,b=1,col="red")
 
+out_trim <- OutFLANK(my_fst, NumberOfSamples=length(unique(pop2)), qthreshold = 0.001, Hmin = 0.1)
 out_trim_18 <- OutFLANK(my_fst_18, NumberOfSamples=length(unique(pop_18)), qthreshold = 0.001, Hmin = 0.1)
 out_trim_21 <- OutFLANK(my_fst_21, NumberOfSamples=length(unique(pop_21)), qthreshold = 0.001, Hmin = 0.1)
 
+str(out_trim)
+head(out_trim$results)
+summary(out_trim$results$OutlierFlag)
+summary(out_trim$results$pvaluesRightTail)
+
+OutFLANKResultsPlotter(out_trim, withOutliers = TRUE,
+                       NoCorr = TRUE, Hmin = 0.01, binwidth = 0.01, Zoom =
+                         FALSE, RightZoomFraction = 0.05, titletext = NULL)
+## Zoom in on right tail
+OutFLANKResultsPlotter(out_trim , withOutliers = TRUE,
+                       NoCorr = TRUE, Hmin = 0.01, binwidth = 0.01, Zoom =
+                         TRUE, RightZoomFraction = 0.15, titletext = NULL)
+
+hist(out_trim$results$pvaluesRightTail)
+
+P1 <- pOutlierFinderChiSqNoCorr(my_fst, Fstbar = out_trim$FSTNoCorrbar, dfInferred = out_trim$dfInferred, qthreshold = 0.05, Hmin=0.1)
+
+my_out <- which(P1$OutlierFlag==TRUE)
+length(my_out)
+plot(P1$He, P1$FST, pch=19, col=rgb(0,0,0,0.1),xlab="Heterozygosity", ylab=expression(paste("F"[ST], " across all populations", sep="")), main=expression(paste("Per locus F"[ST], " vs Heterozygosity", sep="")))
+points(P1$He[my_out], P1$FST[my_out], col="blue",pch=20)
+
+plot(as.factor(P1[!is.na(P1$He),]$LocusName[P1[!is.na(P1$He),]$He>0.1]), P1[!is.na(P1$He),]$FST[P1[!is.na(P1$He),]$He>0.1],
+     xlab="Position", ylab="FST", col=rgb(0,0,0,0.2))
+points(as.factor(P1[!is.na(P1$He),]$LocusName[P1[!is.na(P1$He),]$He>0.1])[my_out], P1[!is.na(P1$He),]$FST[P1[!is.na(P1$He),]$He>0.1][my_out], col="magenta", pch=20)  
+
+OutLoc<-P1[P1$OutlierFlag==TRUE,]
+OutLoc<-OutLoc[!is.na(OutLoc$OutlierFlag),]
 
 str(out_trim_18)
 head(out_trim_18$results)
@@ -277,14 +325,14 @@ hist(out_trim_18$results$pvaluesRightTail)
 
 P1_18 <- pOutlierFinderChiSqNoCorr(my_fst_18, Fstbar = out_trim_18$FSTNoCorrbar, dfInferred = out_trim_18$dfInferred, qthreshold = 0.05, Hmin=0.1)
 
-my_out_18 <- P1_18$OutlierFlag==TRUE
-sum(my_out_18,na.rm = T)
+my_out_18 <- which(P1_18$OutlierFlag==TRUE)
+length(my_out_18)
 plot(P1_18$He, P1_18$FST, pch=19, col=rgb(0,0,0,0.1),xlab="Heterozygosity", ylab=expression(paste("F"[ST], " across all populations", sep="")), main=expression(paste("Per locus F"[ST], " vs Heterozygosity", sep="")))
-points(P1_18$He[my_out_18], P1_18$FST[my_out_18], col="blue")
+points(P1_18$He[my_out_18], P1_18$FST[my_out_18], col="blue",pch=20)
 
 plot(as.factor(P1_18[!is.na(P1_18$He),]$LocusName[P1_18[!is.na(P1_18$He),]$He>0.1]), P1_18[!is.na(P1_18$He),]$FST[P1_18[!is.na(P1_18$He),]$He>0.1],
      xlab="Position", ylab="FST", col=rgb(0,0,0,0.2))
-points(P1_18$LocusName[my_out_18], P1_18$FST[my_out_18], col="magenta", pch=20)  
+points(as.factor(P1_18[!is.na(P1_18$He),]$LocusName[P1_18[!is.na(P1_18$He),]$He>0.1])[my_out_18], P1_18[!is.na(P1_18$He),]$FST[P1_18[!is.na(P1_18$He),]$He>0.1][my_out_18], col="magenta", pch=20)  
 
 OutLoc18<-P1_18[P1_18$OutlierFlag==TRUE,]
 OutLoc18<-OutLoc18[!is.na(OutLoc18$OutlierFlag),]
@@ -314,17 +362,20 @@ points(P1_21$He[my_out_21], P1_21$FST[my_out_21], col="blue")
 
 plot(as.factor(P1_21[!is.na(P1_21$He),]$LocusName[P1_21[!is.na(P1_21$He),]$He>0.1]), P1_21[!is.na(P1_21$He),]$FST[P1_21[!is.na(P1_21$He),]$He>0.1],
      xlab="Position", ylab="FST", col=rgb(0,0,0,0.2))
-points(P1_21$LocusName[my_out_21], P1_21$FST[my_out_21], col="magenta", pch=20)  
+points(as.factor(P1_21[!is.na(P1_21$He),]$LocusName[P1_21[!is.na(P1_21$He),]$He>0.1])[my_out_21], P1_21[!is.na(P1_21$He),]$FST[P1_21[!is.na(P1_21$He),]$He>0.1][my_out_21], col="magenta", pch=20)  
 
 OutLoc21<-P1_21[P1_21$OutlierFlag==TRUE,]
 OutLoc21<-OutLoc21[!is.na(OutLoc21$OutlierFlag),]
 
 
+OutLoc
+OutLoc18
+OutLoc21
 #PCA
 #vcf.fn<-"P.borealis_stacks.g5mac3dp10ind50g95maf05mdp20p1.recode.vcf"
 #snpgdsVCF2GDS(vcf.fn, "P.borealis.gds",method = "copy.num.of.ref")
 
-Pbor<-snpgdsOpen("P.borealis.gds")
+Pbor<-snpgdsOpen("../P.borealis.gds")
 #snpgdsClose(Slam)
 
 pcaC <- snpgdsPCA(Pbor,autosome.only=F)
@@ -360,8 +411,8 @@ ggplot(tab, aes(EV1,EV2,color=pop,shape=pop)) +
   geom_point(size=5) +
   #  scale_shape_manual(name="Pop", labels=unique(pop)[order(unique(pop))], values=shp)+
   #  scale_color_manual(name="Pop", labels=unique(pop)[order(unique(pop))], values=cl)+
-  scale_shape_manual(name="Pop", labels=unique(pop)[order(unique(pop))], values=shp)+
-  scale_color_manual(name="Pop", labels=unique(pop)[order(unique(pop))], values=cl)+
+  scale_shape_manual(name="Pop", labels=unique(pop2)[order(unique(pop2))], values=shp)+
+  scale_color_manual(name="Pop", labels=unique(pop2)[order(unique(pop2))], values=cl)+
   labs(color="") + 
   theme_classic()+
   theme(axis.text=element_text(size=14),axis.title=element_text(size=14))
@@ -402,7 +453,7 @@ ggplot(spca_tab,aes(EV1,EV2,color=Pop,shape=Pop)) +
 
 cv<-read.csv("admixture_CV.csv")
 
-ggplot(cv[-1,])+
+ggplot(cv)+
   geom_line(aes(K,CV),size=1)+
   #geom_vline(xintercept = 4,linetype="dashed")+
   scale_x_continuous(breaks = c(1:15))+
@@ -454,7 +505,7 @@ aggregate(F_MISS~Pop,indmiss,FUN=mean)
 
 cv18<-read.csv("admixture_CV_2018.csv")
 
-ggplot(cv18[-1,])+
+ggplot(cv18)+
   geom_line(aes(K,CV),size=1)+
   #geom_vline(xintercept = 4,linetype="dashed")+
   scale_x_continuous(breaks = c(1:15))+
@@ -463,7 +514,7 @@ ggplot(cv18[-1,])+
 
 cv21<-read.csv("admixture_CV_2021.csv")
 
-ggplot(cv21[-1,])+
+ggplot(cv21)+
   geom_line(aes(K,CV),size=1)+
   #geom_vline(xintercept = 4,linetype="dashed")+
   scale_x_continuous(breaks = c(1:15))+
@@ -497,3 +548,22 @@ pos2 <- list(lat = c(64, 65), lon = c(-19, -20))
 dists <- arcdist(pos1, pos2)         # pos1 and pos2 are lists of coordinates
 
 std<-read.csv("stodvar.csv")
+
+AR18 <- list(lat = c(as.numeric(std$kastad_breidd)[2], as.numeric(std$hift_breidd)[2]), lon = c(as.numeric(std$kastad_lengd)[2], as.numeric(std$hift_lengd)[2]))
+SI18<- list(lat = c(as.numeric(std$kastad_breidd)[4], as.numeric(std$hift_breidd)[4]), lon = c(as.numeric(std$kastad_lengd)[4], as.numeric(std$hift_lengd)[4]))
+SU18<- list(lat = c(as.numeric(std$kastad_breidd)[3], as.numeric(std$hift_breidd)[3]), lon = c(as.numeric(std$kastad_lengd)[3], as.numeric(std$hift_lengd)[3]))
+IS21<- list(lat = c(as.numeric(std$kastad_breidd)[7], as.numeric(std$hift_breidd)[7]), lon = c(as.numeric(std$kastad_lengd)[7], as.numeric(std$hift_lengd)[7]))
+SD18<- list(lat = c(as.numeric(std$kastad_breidd)[1], as.numeric(std$hift_breidd)[1]), lon = c(as.numeric(std$kastad_lengd)[1], as.numeric(std$hift_lengd)[1]))
+YS21<- list(lat = c(as.numeric(std$kastad_breidd)[6], as.numeric(std$hift_breidd)[6]), lon = c(as.numeric(std$kastad_lengd)[6], as.numeric(std$hift_lengd)[6]))
+UH21 <- list(lat = c(as.numeric(std$kastad_breidd)[5], as.numeric(std$hift_breidd)[5]), lon = c(as.numeric(std$kastad_lengd)[5], as.numeric(std$hift_lengd)[5]))
+
+
+
+mean(arcdist(SI18,SU18))
+mean(arcdist(SI18,SD18))
+mean(arcdist(SI18,IS21))
+mean(arcdist(SI18,YS21))
+mean(arcdist(SI18,UH21))
+mean(arcdist(SI18,AR18))
+
+FST<-read.csv("FST_WC_weighted.csv")
