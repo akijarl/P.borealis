@@ -501,6 +501,8 @@ ggplot(data=indmiss)+
   theme_classic()+
   theme(axis.text.x = element_text(angle = -45, vjust = 0.1,hjust = 0.1))
 
+aggregate(N_MISS~Pop,indmiss,FUN=max)
+aggregate(N_MISS~Pop,indmiss,FUN=min)
 aggregate(F_MISS~Pop,indmiss,FUN=mean)
 
 cv18<-read.csv("admixture_CV_2018.csv")
@@ -557,13 +559,120 @@ SD18<- list(lat = c(as.numeric(std$kastad_breidd)[1], as.numeric(std$hift_breidd
 YS21<- list(lat = c(as.numeric(std$kastad_breidd)[6], as.numeric(std$hift_breidd)[6]), lon = c(as.numeric(std$kastad_lengd)[6], as.numeric(std$hift_lengd)[6]))
 UH21 <- list(lat = c(as.numeric(std$kastad_breidd)[5], as.numeric(std$hift_breidd)[5]), lon = c(as.numeric(std$kastad_lengd)[5], as.numeric(std$hift_lengd)[5]))
 
-
-
-mean(arcdist(SI18,SU18))
-mean(arcdist(SI18,SD18))
-mean(arcdist(SI18,IS21))
-mean(arcdist(SI18,YS21))
-mean(arcdist(SI18,UH21))
-mean(arcdist(SI18,AR18))
-
+DIST<-matrix(data=c(
+  0,
+  mean(arcdist(SI18,SU18)),
+  mean(arcdist(SI18,SD18)),
+  mean(arcdist(SI18,IS21)),
+  mean(arcdist(SI18,YS21)),
+  mean(arcdist(SI18,UH21)),
+  mean(arcdist(SI18,AR18)),
+  #
+  mean(arcdist(SU18,SI18)),
+  0,
+  mean(arcdist(SU18,SD18)),
+  mean(arcdist(SU18,IS21)),
+  mean(arcdist(SU18,YS21)),
+  mean(arcdist(SU18,UH21)),
+  mean(arcdist(SU18,AR18)),
+  #
+  mean(arcdist(SD18,SI18)),
+  mean(arcdist(SD18,SU18)),
+  0,
+  mean(arcdist(SD18,IS21)),
+  mean(arcdist(SD18,YS21)),
+  mean(arcdist(SD18,UH21)),
+  mean(arcdist(SD18,AR18)),
+  #
+  mean(arcdist(IS21,SI18)),
+  mean(arcdist(IS21,SU18)),
+  mean(arcdist(IS21,SD18)),
+  0,
+  mean(arcdist(IS21,YS21)),
+  mean(arcdist(IS21,UH21)),
+  mean(arcdist(IS21,AR18)),
+  #
+  mean(arcdist(YS21,SI18)),
+  mean(arcdist(YS21,SU18)),
+  mean(arcdist(YS21,SD18)),
+  mean(arcdist(YS21,IS21)),
+  0,
+  mean(arcdist(YS21,UH21)),
+  mean(arcdist(YS21,AR18)),
+  #
+  mean(arcdist(UH21,SI18)),
+  mean(arcdist(UH21,SU18)),
+  mean(arcdist(UH21,SD18)),
+  mean(arcdist(UH21,IS21)),
+  mean(arcdist(UH21,YS21)),
+  0,
+  mean(arcdist(UH21,AR18)),
+  #
+  mean(arcdist(AR18,SI18)),
+  mean(arcdist(AR18,SU18)),
+  mean(arcdist(AR18,SD18)),
+  mean(arcdist(AR18,IS21)),
+  mean(arcdist(AR18,YS21)),
+  mean(arcdist(AR18,UH21)),
+  0),nrow=7)
+  
+colnames(DIST)<-c("SI18","SU18","SD18","IS21","YS21","UH21","AR18")
+  
 FST<-read.csv("FST_WC_weighted.csv")
+FST<-as.matrix(FST[,-1])
+
+#Öll gögn
+vegan::mantel(FST,DIST,permutations=999)
+ade4::mantel.rtest(as.dist(FST),as.dist(DIST),)
+vegan::mantel(DIST,FST,permutations=999)
+ade4::mantel.rtest(as.dist(DIST),as.dist(FST))
+
+#2018 - án Arnarfjarðar
+vegan::mantel(FST[c(1,2,3),c(1,2,3)],DIST[c(1,2,3),c(1,2,3)],permutations=999)
+vegan::mantel(DIST[c(1,2,3),c(1,2,3)],FST[c(1,2,3),c(1,2,3)],permutations=999)
+
+#2021
+vegan::mantel(FST[c(4,5,6),c(4,5,6)],DIST[c(4,5,6),c(4,5,6)],permutations=999)
+vegan::mantel(DIST[c(4,5,6),c(4,5,6)],FST[c(4,5,6),c(4,5,6)],permutations=999)
+
+#2018 - öll
+vegan::mantel(FST[c(1,2,3,7),c(1,2,3,7)],DIST[c(1,2,3,7),c(1,2,3,7)],permutations=999)
+
+#Öll gögn - á Arnarfjarðar
+vegan::mantel(FST[-7,-7],DIST[-7,-7],method="kendall",permutations=999)
+vegan::mantel(DIST[-7,-7],FST[-7,-7],method="kendall",permutations=999)
+ade4::mantel.rtest(as.dist(FST[-7,-7]),as.dist(DIST[-7,-7]))
+ade4::mantel.rtest(as.dist(DIST[-7,-7]),as.dist(FST[-7,-7]))
+
+plot(as.dist(DIST),as.dist(FST))
+plot(as.dist(DIST[c(1,2,3),c(1,2,3)]),as.dist(FST[c(1,2,3),c(1,2,3)]))
+plot(as.dist(DIST[c(1,2,3,7),c(1,2,3,7)],as.dist(FST[c(1,2,3,7),c(1,2,3,7)])))
+plot(as.dist(DIST[c(4,5,6),c(4,5,6)]),as.dist(FST[c(4,5,6),c(4,5,6)]))
+
+#Fjarlægð sem sýnir ekki IBD 
+plot(log(as.dist(DIST[-7,-7])),as.dist(FST[-7,-7]/(1-FST[-7,-7])))
+
+arcdist(lat=AR18[[1]][1],lon=AR18[[2]][1],lat1=AR18[[1]][2],lon1=AR18[[2]][2])
+
+env<-std[,c(6,7,8,9,12,13,14,16)]
+row.names(env)<-c("SU18","AR18","SI18","SD21","YS21","IS21","UH21")
+DIST
+ad<-vegan::adonis2(as.dist(FST)~kastad_breidd*kastad_lengd*hift_breidd*hift_lengd*botnhiti*yfirbordshiti*lofthiti*toglengd,data=env, permutations = 99)
+summary(ad)
+
+require(hierfstat)
+?hierfstat
+#prepare sample for OutFLANK analysis
+G2 <- matrix(NA, nrow = nrow(geno), ncol = ncol(geno),dimnames = list(pos_loc,colnames(geno)))
+
+G2[geno %in% c("0/0")] <- 00
+G2[geno %in% c("0/1", "1/0")] <- 10
+G2[geno %in% c("1/1")] <- 11
+
+dat<-data.frame(t(G2))
+dat$Pop<-pop2
+dat<-dat[,c(1472,1:1471)]
+betas(dat,nboot=1000,lim=c(0.025,0.975),diploid=TRUE,betaijT=FALSE)
+boot.ppbetas(dat=dat,nboot=100,quant=c(0.025,0.975),diploid=TRUE,digits=4)
+
+require(dartR)
