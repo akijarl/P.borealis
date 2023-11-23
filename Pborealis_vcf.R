@@ -661,8 +661,7 @@ ad<-vegan::adonis2(as.dist(FST)~kastad_breidd*kastad_lengd*hift_breidd*hift_leng
 summary(ad)
 
 require(hierfstat)
-?hierfstat
-#prepare sample for OutFLANK analysis
+
 G2 <- matrix(NA, nrow = nrow(geno), ncol = ncol(geno),dimnames = list(pos_loc,colnames(geno)))
 
 G2[geno %in% c("0/0")] <- 00
@@ -672,7 +671,68 @@ G2[geno %in% c("1/1")] <- 11
 dat<-data.frame(t(G2))
 dat$Pop<-pop2
 dat<-dat[,c(1472,1:1471)]
+
 betas(dat,nboot=1000,lim=c(0.025,0.975),diploid=TRUE,betaijT=FALSE)
 boot.ppbetas(dat=dat,nboot=100,quant=c(0.025,0.975),diploid=TRUE,digits=4)
 
-require(dartR)
+genet.dist(dat,diploid=TRUE,method="WC84")
+boot.ppbetas
+
+boot.ppf(dat=dat,nboot=100,quant=c(0.025,0.975),diploid=TRUE)
+
+boot.vc(levels=dat[,1],loci=dat[,-1],diploid=TRUE,nboot=1000,quant=c(0.025,0.5,0.975))
+
+
+findVar <- function(a, b, c) {
+  theta.L <- c(rep(0, 10))
+  for (i in 1:ncol(data)) {
+    # remove locus i
+    theta.L[i] <- sum(a[-i]) / sum(a[-i] + b[-i] + c[-i])
+  }
+  m <- ncol(data)
+  mean.theta <- sum(theta.L) / m
+  var.theta <- ((m - 1) / m) * sum((theta.L - mean.theta)^2)
+  return (var.theta)
+}
+
+t.i <- c(rep(0, 10))
+m <- ncol(dat[,-1])
+aTemp <- c(rep(0, 10))
+bTemp <- c(rep(0, 10))
+cTemp <- c(rep(0, 10))
+for (i in 1:1000) {
+  list <- sample(1:m, m, replace = TRUE) 
+  for (j in 1:m) {
+    aTemp[j] <- a[list[j]]
+    bTemp[j] <- b[list[j]]
+    cTemp[j] <- c[list[j]]
+  }
+  theta.i <- sum(aTemp) / sum(aTemp + bTemp + cTemp)
+  
+  # find the variance
+  var.theta.i <- findVar(aTemp, bTemp, cTemp)
+  
+  t.i[i] <- (theta.i - theta) / var.theta.i
+}
+
+alpha <- 0.05
+t.i <- sort(t.i)
+firstT <- t.i[ceiling(length(t.i) * (1 - alpha / 2))]
+secondT <- t.i[ceiling(length(t.i) * (alpha/2))]
+
+lower <- theta - (firstT * var.theta)
+upper <- theta - (secondT * var.theta)
+
+var.theta <- findVar(a, b, c)
+
+require(adegenet)
+require(StAMPP)
+G <- matrix(NA, nrow = nrow(geno), ncol = ncol(geno),dimnames = list(pos_loc,colnames(geno)))
+G[geno %in% c("0/0")] <- 0
+G[geno %in% c("0/1", "1/0")] <- 1
+G[geno %in% c("1/1")] <- 2
+
+Gl<-new("genlight",gen=t(G))
+pop(Gl)<-pop2
+FST_p<-stamppFst(Gl, nboots = 1000, percent = 95, nclusters = 1)
+
