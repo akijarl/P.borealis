@@ -85,26 +85,32 @@ require(bigstatsr)
 # GQ <- extract.gt(x, element = "GQ", as.numeric=TRUE)
 # 
 # 
-# indmiss<-read.table("out.imiss",sep="\t",header = T)
-# indmiss$INDV
-# 
-# ind<-c("SU18_10", "SU18_11", "SU18_13", "SU18_17", "SU18_18", "SU18_19", "SU18_20", "SU18_21", "SU18_22", "SU18_23", "SU18_24", "SU18_3", "SU18_6", "SU18_7", "SU18_9", "AR18_26", "AR18_29", "AR18_30", "AR18_31", "AR18_32", "AR18_33", "AR18_34", "AR18_36", "AR18_39", "AR18_41", "AR18_42", "AR18_43", "AR18_44", "AR18_45", "AR18_47", "AR18_48", "SI18_49", "SI18_51", "SI18_52", "SI18_53", "SI18_56", "SI18_57", "SI18_58", "SI18_59", "SI18_60", "SI18_66", "SI18_67", "SI18_68", "SI18_70", "SI18_71", "SI18_72", "SD18_74", "SD18_75", "SD18_76", "SD18_78", "SD18_79", "SD18_80", "SD18_81", "SD18_84", "SD18_86", "SD18_87", "SD18_88", "SD18_89", "SD18_90", "SD18_91", "SD18_92", "SD18_94", "YS21_1", "YS21_10", "YS21_11", "YS21_12", "YS21_2", "YS21_3", "YS21_4", "YS21_5", "YS21_6", "YS21_7", "YS21_8", "YS21_9", "IS21_66", "IS21_67", "IS21_68", "IS21_69", "IS21_70", "IS21_71", "IS21_72", "IS21_73", "IS21_74", "IS21_75", "IS21_76", "UH21_141", "UH21_142", "UH21_143", "UH21_144", "UH21_145", "UH21_146", "UH21_147", "UH21_148", "UH21_149", "UH21_150", "UH21_151")
-# samp<-c("10_SU18","11_SU18","13_SU18","17_SU18","18_SU18","19_SU18","20_SU18","21_SU18","22_SU18","23_SU18","24_SU18","3_SU18","6_SU18","7_SU18","9_SU18","26_AR18","29_AR18","30_AR18","31_AR18","32_AR18","33_AR18","34_AR18","36_AR18","39_AR18","41_AR18","42_AR18","43_AR18","44_AR18","45_AR18","47_AR18","48_AR18","49_SI18","51_SI18","52_SI18","53_SI18","56_SI18","57_SI18","58_SI18","59_SI18","60_SI18","66_SI18","67_SI18","68_SI18","70_SI18","71_SI18","72_SI18","74_SD18","75_SD18","76_SD18","78_SD18","79_SD18","80_SD18","81_SD18","84_SD18","86_SD18","87_SD18","88_SD18","89_SD18","90_SD18","91_SD18","92_SD18","94_SD18","1_YS21","10_YS21","11_YS21","12_YS21","2_YS21","3_YS21","4_YS21","5_YS21","6_YS21","7_YS21","8_YS21","9_YS21","66_IS21","67_IS21","68_IS21","69_IS21","70_IS21","71_IS21","72_IS21","73_IS21","74_IS21","75_IS21","76_IS21","141_UH21","142_UH21","143_UH21","144_UH21","145_UH21","146_UH21","147_UH21","148_UH21","149_UH21","150_UH21","151_UH21")
-# pop<-c("SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21")
-# year<-c(rep("2018",62),rep("2021",34))
-# indmiss$Sample<-ind
-# indmiss$Sample2<-samp
-# indmiss$Pop<-pop
-# indmiss$Year<-year
-# indmiss<-indmiss[order(indmiss$F_MISS,decreasing = T),]
-# indmiss$Sample2<-factor(indmiss$Sample2,levels = indmiss$Sample2)
-# ggplot(data=indmiss)+
-#   geom_col(aes(x = Sample2, y = (F_MISS),fill=Year))+
-#   ylab("Fraction of missing SNPs")+
-#   theme_classic()+
-#   theme(axis.text.x = element_text(angle = -45, vjust = 0.1,hjust = 0.1))
-# 
-# aggregate(F_MISS~Pop,indmiss,FUN=mean)
+indmiss<-read.table("out.imiss",sep="\t",header = T)
+indmiss$INDV
+
+ind<-c("SU18_10", "SU18_11", "SU18_13", "SU18_17", "SU18_18", "SU18_19", "SU18_20", "SU18_21", "SU18_22", "SU18_23", "SU18_24", "SU18_3", "SU18_6", "SU18_7", "SU18_9", "AR18_26", "AR18_29", "AR18_30", "AR18_31", "AR18_32", "AR18_33", "AR18_34", "AR18_36", "AR18_39", "AR18_41", "AR18_42", "AR18_43", "AR18_44", "AR18_45", "AR18_47", "AR18_48", "SI18_49", "SI18_51", "SI18_52", "SI18_53", "SI18_56", "SI18_57", "SI18_58", "SI18_59", "SI18_60", "SI18_66", "SI18_67", "SI18_68", "SI18_70", "SI18_71", "SI18_72", "SD18_74", "SD18_75", "SD18_76", "SD18_78", "SD18_79", "SD18_80", "SD18_81", "SD18_84", "SD18_86", "SD18_87", "SD18_88", "SD18_89", "SD18_90", "SD18_91", "SD18_92", "SD18_94", "YS21_1", "YS21_10", "YS21_11", "YS21_12", "YS21_2", "YS21_3", "YS21_4", "YS21_5", "YS21_6", "YS21_7", "YS21_8", "YS21_9", "IS21_66", "IS21_67", "IS21_68", "IS21_69", "IS21_70", "IS21_71", "IS21_72", "IS21_73", "IS21_74", "IS21_75", "IS21_76", "UH21_141", "UH21_142", "UH21_143", "UH21_144", "UH21_145", "UH21_146", "UH21_147", "UH21_148", "UH21_149", "UH21_150", "UH21_151")
+samp<-c("10_SU","11_SU","13_SU","17_SU","18_SU","19_SU","20_SU","21_SU","22_SU","23_SU","24_SU","3_SU","6_SU","7_SU","9_SU","26_AR","29_AR","30_AR","31_AR","32_AR","33_AR","34_AR","36_AR","39_AR","41_AR","42_AR","43_AR","44_AR","45_AR","47_AR","48_AR","49_SI","51_SI","52_SI","53_SI","56_SI","57_SI","58_SI","59_SI","60_SI","66_SI","67_SI","68_SI","70_SI","71_SI","72_SI","74_SD","75_SD","76_SD","78_SD","79_SD","80_SD","81_SD","84_SD","86_SD","87_SD","88_SD","89_SD","90_SD","91_SD","92_SD","94_SD","1_YS","10_YS","11_YS","12_YS","2_YS","3_YS","4_YS","5_YS","6_YS","7_YS","8_YS","9_YS","66_IS","67_IS","68_IS","69_IS","70_IS","71_IS","72_IS","73_IS","74_IS","75_IS","76_IS","141_UH","142_UH","143_UH","144_UH","145_UH","146_UH","147_UH","148_UH","149_UH","150_UH","151_UH")
+pop<-c("SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "SU18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "AR18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SI18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "SD18", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "YS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "IS21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21", "UH21")
+year<-c(rep("2018",62),rep("2021",34))
+indmiss$Sample<-ind
+indmiss$Sample2<-samp
+indmiss$Pop<-pop
+indmiss$Year<-year
+indmiss<-indmiss[order(indmiss$F_MISS,decreasing = T),]
+indmiss$Sample2<-factor(indmiss$Sample2,levels = indmiss$Sample2)
+ggplot(data=indmiss)+
+  geom_col(aes(x = Sample2, y = (F_MISS),fill=Year))+
+  geom_abline(slope=0,intercept = 0.5,col="black",lwd=1)+
+  xlab("")+
+  ylab("Fraction of missing SNPs")+
+  theme_classic()+
+  theme(axis.title=element_text(size=14,face="bold"),
+        legend.title=element_text(size=14,face="bold"),
+        legend.text=element_text(size=14,face="bold"),
+        axis.text.y = element_text(size=14,face="bold"),
+        axis.text.x = element_text(size=14,angle = 270, vjust = 0.2,hjust = 1,face="bold"))
+
+aggregate(F_MISS~Pop,indmiss,FUN=mean)
 
 #New filtered file
 x<-read.vcfR("../P.borealis_stacks.g5mac3dp10ind50g95maf05mdp20p1.recode.vcf")
